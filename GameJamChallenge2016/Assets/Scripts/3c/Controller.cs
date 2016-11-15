@@ -20,7 +20,7 @@ public class Controller : MonoBehaviour
         m_DirToGo1 = Vector3.zero;
         m_Rotate1 = Vector3.zero;
 
-	if (Input.GetAxisRaw("Right X Axis "+ m_PlayerID) != 0)
+        if (Input.GetAxisRaw("Right X Axis "+ m_PlayerID) != 0)
         {
             Debug.Log("Right X Axis " + m_PlayerID);
             m_Rotate1 = new Vector3(0, Input.GetAxisRaw("Right X Axis " + m_PlayerID), 0);
