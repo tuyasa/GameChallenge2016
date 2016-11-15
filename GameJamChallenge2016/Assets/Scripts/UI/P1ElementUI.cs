@@ -15,19 +15,19 @@ public class P1ElementUI : MonoBehaviour
     private int m_maxElement = 6;
 
 	[SerializeField]
-    	private Element[] m_elementTemplate;
+    private Element[] m_elementTemplate;
 	
-    	public Element[] ElementTemplate { get { return m_elementTemplate; } }
+    public Element[] ElementTemplate { get { return m_elementTemplate; } }
 
 
 
-    public List<Element> m_elementListP1 = new List<Element>();
+    private List<Element> m_elementListP1 = new List<Element>();
     /// <summary>
     /// List of all player 1 elements currently in the bar
     /// </summary>
     public List<Element> ElementListP1 { get { return m_elementListP1; } }
 
-    public List<Element> m_elementListP2 = new List<Element>();
+    private List<Element> m_elementListP2 = new List<Element>();
     /// <summary>
     /// List of all player 2 elements currently in the bar
     /// </summary>
