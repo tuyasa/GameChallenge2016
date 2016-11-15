@@ -10,7 +10,12 @@ public class SpellCastManager : PersistentSingleton<SpellCastManager>
 	public int minElement = 3;
 	public float castTime = 10f;
 
-	private const int playerNumber = 2;
+    private bool isTriggerLeft1 = false;
+    private bool isTriggerLeft2 = false;
+    private bool isTriggerRight1 = false;
+    private bool isTriggerRight2 = false;
+
+    private const int playerNumber = 2;
 
 	SpellCast[] castedSpells;
 
@@ -52,18 +57,32 @@ public class SpellCastManager : PersistentSingleton<SpellCastManager>
 
 	void Update ()
 	{
-		if (Input.GetButtonDown ("Left Trigger 1")) {
+		if (Input.GetAxisRaw ("Left Trigger 1") != 0 && !isTriggerLeft1)
+        {
+            isTriggerLeft1 = true;
 			GenerateStartingElements(1, typeSpells[Random.Range(0,9)]);
 			CastSpell(1);
 		}
 
-		if (Input.GetButtonDown ("Left Trigger 2")) {
+        if(Input.GetAxisRaw ("Left Trigger 1") == 0)
+        {
+            isTriggerLeft1 = false;
+        }
+
+		if (Input.GetAxisRaw ("Left Trigger 2") != 0 && !isTriggerLeft2)
+        {
+            isTriggerRight2 = true;
 			GenerateStartingElements(2, typeSpells[Random.Range(0,9)]);
 			CastSpell(2);
 		}
-//		viewInputsJ1 = castedSpells [0].pressedInputs.ToList ();	
-//		viewInputsJ2 = castedSpells [1].pressedInputs.ToList ();	
-	}
+
+        if (Input.GetAxisRaw("Left Trigger 2") == 0)
+        {
+            isTriggerRight2 = false;
+        }
+        //		viewInputsJ1 = castedSpells [0].pressedInputs.ToList ();	
+        //		viewInputsJ2 = castedSpells [1].pressedInputs.ToList ();	
+    }
 
 	public void CastSpell(int playerId) {
 		if(!castedSpells[playerId-1].isCasting) {
@@ -88,7 +107,10 @@ public class SpellCastManager : PersistentSingleton<SpellCastManager>
 				}
 			}
 			
-			if (Input.GetButtonDown ("Cancel") && spell.pressedInputs.Count > minElement) {
+			if (Input.GetAxisRaw ("Left Trigger "+playerId.ToString()) != 0 && spell.pressedInputs.Count > minElement )
+            {
+                if (playerId == 1)
+                    isTriggerRight1 = true;
 				spell.pressedInputs.Pop ();
 				elementsUI.ClearLastElement(playerId);
 			}
