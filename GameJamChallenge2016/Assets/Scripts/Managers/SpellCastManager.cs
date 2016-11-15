@@ -45,26 +45,21 @@ public class SpellCastManager : PersistentSingleton<SpellCastManager>
 
 	public List<string> availableInputs = new List<string> ();
 
-	List<TypeSpells> attackSpells = new List<TypeSpells>();
-	List<TypeSpells> defenseSpells = new List<TypeSpells>();
-	List<TypeSpells> environmentSpells = new List<TypeSpells>();
-
-	//Just for debug
-//	public List<string> viewInputsJ1 = new List<string> ();
-//	public List<string> viewInputsJ2 = new List<string> ();
-//
+	List<TypeSpells> attackSpells = new List<TypeSpells> ();
+	List<TypeSpells> defenseSpells = new List<TypeSpells> ();
+	List<TypeSpells> environmentSpells = new List<TypeSpells> ();
 
 	void Awake ()
 	{
 		//fetch special spells
 		foreach (var item in typeSpells) {
 
-			if(item.type==SpellType.Attack)
-				attackSpells.Add(item);
-			else if(item.type==SpellType.Defense)
-				defenseSpells.Add(item);
-			else if(item.type==SpellType.Environment)
-				environmentSpells.Add(item);
+			if (item.type == SpellType.Attack)
+				attackSpells.Add (item);
+			else if (item.type == SpellType.Defense)
+				defenseSpells.Add (item);
+			else if (item.type == SpellType.Environment)
+				environmentSpells.Add (item);
 		}
 		castedSpells = new SpellCast[playerNumber];
 		for (int i = 0; i < playerNumber; i++) {			
@@ -74,20 +69,14 @@ public class SpellCastManager : PersistentSingleton<SpellCastManager>
 
 	void Update ()
 	{
-        for (int i = 0; i < 2; i++)
-        {
-            Debug.Log("player " + i + 1 + castedSpells[i].isCasting);
-        }
 		if (Input.GetAxisRaw ("Left Trigger 1") != 0 && !isTriggerLeft1) {
 			isTriggerLeft1 = true;
+			Debug.Log("Left Trigger1");
 			CastSpell (1);
 		}
 
-		if (Input.GetAxisRaw ("Left Trigger 1") == 0) {
-			isTriggerLeft1 = false;
-		}
-
 		if (Input.GetAxisRaw ("Left Trigger 2") != 0 && !isTriggerLeft2) {
+			Debug.Log("Left Trigger1");
 			isTriggerLeft2 = true;
 			CastSpell (2);
 		}
@@ -95,67 +84,70 @@ public class SpellCastManager : PersistentSingleton<SpellCastManager>
 		if (Input.GetAxisRaw ("Left Trigger 2") == 0) {
 			isTriggerLeft2 = false;
 		}
-
+		if (Input.GetAxisRaw ("Left Trigger 1") == 0) {
+			isTriggerLeft1 = false;
+		}
 		//		viewInputsJ1 = castedSpells [0].pressedInputs.ToList ();	
 		//		viewInputsJ2 = castedSpells [1].pressedInputs.ToList ();	
 	}
-   
+
 
 	public void CastSpell (int playerId)
 	{
+		Debug.Log("CastSpell"+playerId);
 		if (!castedSpells [playerId - 1].isCasting) {
+			Debug.Log("Launch cast spell"+playerId);
 			GenerateStartingElements (playerId, typeSpells [Random.Range (0, 9)]);
 			StartCoroutine ("CastSpellCor", playerId);
 		}
 	}
 
-//	public void CastSpell (int playerId, SpellType type)
-//	{
-//		if (!castedSpells [playerId - 1].isCasting) {
-////			GenerateStartingElements (playerId,);
-//			if(type == SpellType.Attack) {
-//				StartCoroutine ("CastSpellCor", attackSpells[Random.Range(0, attackSpells.Count-1)] );
-//				
-//			}else if(type == SpellType.Defense) {
-//				StartCoroutine ("CastSpellCor", defenseSpells[Random.Range(0, defenseSpells.Count-1)] );
-//				
-//			}else if(type == SpellType.Environment) {
-//				StartCoroutine ("CastSpellCor", environmentSpells[Random.Range(0, environmentSpells.Count-1)] );
-//			}
-//		}
-//	}
+	//	public void CastSpell (int playerId, SpellType type)
+	//	{
+	//		if (!castedSpells [playerId - 1].isCasting) {
+	////			GenerateStartingElements (playerId,);
+	//			if(type == SpellType.Attack) {
+	//				StartCoroutine ("CastSpellCor", attackSpells[Random.Range(0, attackSpells.Count-1)] );
+	//				
+	//			}else if(type == SpellType.Defense) {
+	//				StartCoroutine ("CastSpellCor", defenseSpells[Random.Range(0, defenseSpells.Count-1)] );
+	//				
+	//			}else if(type == SpellType.Environment) {
+	//				StartCoroutine ("CastSpellCor", environmentSpells[Random.Range(0, environmentSpells.Count-1)] );
+	//			}
+	//		}
+	//	}
 
 	IEnumerator CastSpellCor (int playerId)
 	{
-        castedSpells [playerId - 1].isCasting = true;
+		castedSpells [playerId - 1].isCasting = true;
 		float t = 0f;
 		float rate = 1 / castTime;
 
 		while (t < 1) {
 			t += Time.deltaTime * rate;
-            //Debug.Log("time : " + t +" player"+playerId);
+
 			foreach (string input in availableInputs) {
-				if (Input.GetButtonDown (input.ToString () + playerId) && castedSpells[playerId - 1].pressedInputs.Count < maxElement) {
-                    Debug.Log("player" + playerId);
-                    castedSpells[playerId - 1].pressedInputs.Push (input);
+				if (Input.GetButtonDown (input.ToString () + playerId) && castedSpells [playerId - 1].pressedInputs.Count < maxElement) {
+					castedSpells [playerId - 1].pressedInputs.Push (input);
 					elementsUI.AddToElementList (elementsUI.ElementToImage (input.ToString ()), playerId);
 				}
 			}
 
 			//Case player one
 			if (playerId == 1) {
-				if (Input.GetAxisRaw ("Right Trigger " + playerId.ToString ()) != 0 && castedSpells[playerId - 1].pressedInputs.Count > minElement && !isTriggerRight1) {
+				if (Input.GetAxisRaw ("Right Trigger " + playerId.ToString ()) != 0 && castedSpells [playerId - 1].pressedInputs.Count > minElement && !isTriggerRight1) {
 					isTriggerRight1 = true;
-                    castedSpells[playerId - 1].pressedInputs.Pop ();
-					elementsUI.ClearLastElement (playerId);
+					castedSpells [playerId - 1].pressedInputs.Pop ();
+					elementsUI.ClearLastElement (playerId);		
 				}
 				if (Input.GetAxisRaw ("Right Trigger " + playerId.ToString ()) == 0)
 					isTriggerRight1 = false;
 			} else if (playerId == 2) { //Case player two
-				if (Input.GetAxisRaw ("Right Trigger " + playerId.ToString ()) != 0 && castedSpells[playerId - 1].pressedInputs.Count > minElement && !isTriggerRight2) {
+				if (Input.GetAxisRaw ("Right Trigger " + playerId.ToString ()) != 0 && castedSpells [playerId - 1].pressedInputs.Count > minElement && !isTriggerRight2) {
 					isTriggerRight2 = true;
 
-                    castedSpells[playerId - 1].pressedInputs.Pop ();
+					castedSpells [playerId - 1].pressedInputs.Pop ();
 					elementsUI.ClearLastElement (playerId);
 				}
 				if (Input.GetAxisRaw ("Right Trigger " + playerId.ToString ()) == 0)
@@ -165,9 +157,9 @@ public class SpellCastManager : PersistentSingleton<SpellCastManager>
 
 			yield return null;
 		}
-        //We've done casting so clear the view and the model
-        castedSpells[playerId - 1].isCasting = false;
-        castedSpells[playerId - 1].pressedInputs.Clear ();
+		//We've done casting so clear the view and the model
+		castedSpells [playerId - 1].isCasting = false;
+		castedSpells [playerId - 1].pressedInputs.Clear ();
 		elementsUI.ClearElementList (playerId);
 	}
 
